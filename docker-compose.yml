@@ -1,0 +1,6 @@
+version: '2'
+services:
+  ts3-query-api:
+    build: .
+    ports:
+      - 5000:7600
