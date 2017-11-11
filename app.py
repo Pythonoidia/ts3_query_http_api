@@ -12,7 +12,7 @@ def establish_connection():
     ts3conn = ts3.query.TS3Connection(configuration.ip, configuration.port)
     ts3conn.login(client_login_name=configuration.client_login_name, client_login_password=configuration.client_login_password)
     ts3conn.use(sid=configuration.sid)
-    ts3conn.clientupdate(client_nickname="Huskar")
+    ts3conn.clientupdate(client_nickname=configuration.client_nickname)
     return ts3conn
 
 @auth.verify_password
