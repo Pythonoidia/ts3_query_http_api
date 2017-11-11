@@ -1,1 +1,4 @@
-# ts3_query_http_api
+
+To configure api, you need to set environment variables:
+
+
