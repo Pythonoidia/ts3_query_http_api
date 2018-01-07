@@ -1,8 +1,10 @@
 from flask import Flask, json
 from flask_restful import reqparse, abort, Api, Resource
 from flask_httpauth import HTTPBasicAuth
+from gevent.wsgi import WSGIServer
 import ts3
 import configuration
+
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -133,6 +135,13 @@ class ServerBanner(Resource):
         return 1,201
 
 
+class Welcome(Resource):
+    def get(self):
+        return None, 200
+
+
+
+api.add_resource(Welcome, '/')
 api.add_resource(ChannelList, '/channels')
 api.add_resource(Channel, '/channels/<cid>')
 api.add_resource(ChannelTopic, '/channels/topic')
@@ -142,4 +151,5 @@ api.add_resource(ClientInfo, '/clients/<clid>')
 api.add_resource(ClientMessage, '/clients/message')
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=7600)
+  http_server = WSGIServer(('', 80), app)
+  http_server.serve_forever()

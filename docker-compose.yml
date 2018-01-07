@@ -1,6 +1,18 @@
-version: '2'
+version: "2"
+
 services:
-  ts3-query-api:
+  ts3-api:
     build: .
+
+  haproxy:
+    image: 'dockercloud/haproxy'
+    links:
+     - ts3-api
     ports:
-      - 5000:7600
+     - "9652:80"
+     - "1936:1936"
+    environment:
+      STATS_AUTH: "change:me"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
