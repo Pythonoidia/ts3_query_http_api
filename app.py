@@ -1,7 +1,7 @@
 from flask import Flask, json
 from flask_restful import reqparse, abort, Api, Resource
 from flask_httpauth import HTTPBasicAuth
-from gevent.wsgi import WSGIServer
+from gevent.pywsgi import WSGIServer
 import ts3
 import configuration
 
