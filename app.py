@@ -135,6 +135,7 @@ class Messages(Resource):
 class MessagesSubscribe(Resource):
     '''
     '''
+    @auth.login_required
     def get(self):
         try:
             conn.servernotifyregister(event="textprivate")
@@ -152,6 +153,29 @@ class GetMessages(Resource):
             abort(404, message="{}".format(msg))
         return events.parsed, 200
 
+class PokeClient(Resource):
+    '''
+    '''
+    @auth.login_required
+    def get(self, msg, clid):
+        try:
+            conn.clientpoke(msg=msg, clid=clid)
+        except ts3.query.TS3QueryError as msg:
+             abort(404, message="{}".format(msg))
+        return None, 202
+
+class MassPoke(Resource):
+    @auth.login_required
+    def get(self, msg):
+        clients = conn.clientlist()
+        try:
+            for client in clients:
+                conn.clientpoke(msg=msg, clid=client["clid"])
+        except ts3.query.TS3QueryError as msg:
+            abort(404, message="{}".format(msg))
+        return None, 202
+
+
 
 api.add_resource(Welcome, '/')
 api.add_resource(ChannelList, '/channels')
@@ -163,7 +187,10 @@ api.add_resource(ClientInfo, '/clients/<clid>')
 api.add_resource(ClientMessage, '/clients/message')
 api.add_resource(MessagesSubscribe, '/notifyregister')
 api.add_resource(GetMessages, '/getmessages')
+api.add_resource(PokeClient, '/poke/<msg>/<clid>')
+api.add_resource(MassPoke, '/masspoke/<msg>')
+
 
 if __name__ == '__main__':
-  http_server = WSGIServer(('', 9998), app)
-  http_server.serve_forever()
+    http_server = WSGIServer(('', 9998), app)
+    http_server.serve_forever()
