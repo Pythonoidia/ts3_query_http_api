@@ -175,7 +175,14 @@ class MassPoke(Resource):
             abort(404, message="{}".format(msg))
         return None, 202
 
-
+class KickUser(Resource):
+    @auth.login_required
+    def get(self, clid):
+        try:
+            conn.clientkick(reasonid = 4, clid=clid)
+        except ts3.query.TS3QueryError as msg:
+            abort(404, message="{}".format(msg))
+        return None, 202
 
 api.add_resource(Welcome, '/')
 api.add_resource(ChannelList, '/channels')
@@ -189,7 +196,7 @@ api.add_resource(MessagesSubscribe, '/notifyregister')
 api.add_resource(GetMessages, '/getmessages')
 api.add_resource(PokeClient, '/poke/<msg>/<clid>')
 api.add_resource(MassPoke, '/masspoke/<msg>')
-
+api.add_resource(KickUser, '/kickuser/<clid>')
 
 if __name__ == '__main__':
     http_server = WSGIServer(('', 9998), app)
