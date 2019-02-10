@@ -164,22 +164,20 @@ class PokeClient(Resource):
              abort(404, message="{}".format(msg))
         return None, 202
 
-class MassPoke(Resource):
-    @auth.login_required
-    def get(self, msg):
-        clients = conn.clientlist()
-        try:
-            for client in clients:
-                conn.clientpoke(msg=msg, clid=client["clid"])
-        except ts3.query.TS3QueryError as msg:
-            abort(404, message="{}".format(msg))
-        return None, 202
-
 class KickUser(Resource):
     @auth.login_required
     def get(self, clid):
         try:
-            conn.clientkick(reasonid = 4, clid=clid)
+            conn.clientkick(reasonid = 5, clid=clid)
+        except ts3.query.TS3QueryError as msg:
+            abort(404, message="{}".format(msg))
+        return None, 202
+
+class ClientMove(Resource):
+    @auth.login_required
+    def get(self,clid, cid):
+        try:
+            conn.clientmove(clid=clid, cid=cid)
         except ts3.query.TS3QueryError as msg:
             abort(404, message="{}".format(msg))
         return None, 202
@@ -190,13 +188,13 @@ api.add_resource(Channel, '/channels/<cid>')
 api.add_resource(ChannelTopic, '/channels/topic')
 api.add_resource(ServerBanner, '/banner')
 api.add_resource(ClientList, '/clients')
-api.add_resource(ClientInfo, '/clients/<clid>')
+api.add_resource(ClientInfo, '/client/<clid>')
 api.add_resource(ClientMessage, '/clients/message')
 api.add_resource(MessagesSubscribe, '/notifyregister')
 api.add_resource(GetMessages, '/getmessages')
 api.add_resource(PokeClient, '/poke/<msg>/<clid>')
-api.add_resource(MassPoke, '/masspoke/<msg>')
 api.add_resource(KickUser, '/kickuser/<clid>')
+api.add_resource(ClientMove, '/move/<clid>/<cid>')
 
 if __name__ == '__main__':
     http_server = WSGIServer(('', 9998), app)
